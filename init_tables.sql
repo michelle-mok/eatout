@@ -1,0 +1,40 @@
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  first_name TEXT,
+  last_name TEXT,
+  email TEXT,
+  password TEXT,
+  vegetarian TEXT,
+  halal TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS user_friends (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users (id),
+  friend_id INTEGER REFERENCES users (id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS cuisines (
+  id SERIAL PRIMARY KEY,
+  name TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS user_preferences (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users (id),
+  cuisine_id INTEGER REFERENCES cuisines (id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS restaurants (
+  id SERIAL PRIMARY KEY,
+  cuisine_id INTEGER,
+  budget_id INTEGER,
+  location_id INTEGER,
+  address TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
