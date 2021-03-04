@@ -53,7 +53,9 @@ INSERT INTO user_preferences (user_id, cuisine_id) VALUES (3, 5);
 INSERT INTO user_preferences (user_id, cuisine_id) VALUES (3, 8);
 
 
-
+INSERT INTO restaurants (name, cuisine_id, budget_id, location_id, address) VALUES ('My Spanish Place', 8, 3, 1, '50 Bukit Timah');
+INSERT INTO restaurants (name, cuisine_id, budget_id, location_id, address) VALUES ('Himalayan Kitchen', 5, 2, 1, '20 MacPherson Road');
+INSERT INTO restaurants (name, cuisine_id, budget_id, location_id, address) VALUES ('Spanish Unlimited', 8, 2, 2, '62 Woodlands Drive');
 
 
 

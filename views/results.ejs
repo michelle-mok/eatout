@@ -1,0 +1,18 @@
+<%- include ('partials/head') %>
+
+<div class="container">
+  
+ <% restaurantsArray.forEach((restaurant) => { %>
+    <div class="row">
+      <div class="col">
+        <p><%= restaurant.name %></p>
+        <p><%= restaurant.address %></p>
+      </div>
+    </div>
+  <% }) %>
+ 
+</div>
+
+
+
+<%- include ('partials/footer') %>

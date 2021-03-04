@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS user_preferences (
 
 CREATE TABLE IF NOT EXISTS restaurants (
   id SERIAL PRIMARY KEY,
-  cuisine_id INTEGER,
+  name TEXT, 
+  cuisine_id INTEGER REFERENCES cuisines (id),
   budget_id INTEGER,
   location_id INTEGER,
   address TEXT,
