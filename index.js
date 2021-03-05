@@ -6,15 +6,30 @@ import jsSHA from 'jssha';
 
 const { Pool } = pg;
 
-const pool = new Pool({
-  user: 'michellemok',
-  host: 'localhost',
-  database: 'eatout',
-  port: 5432,
-});
+let pgConnectionConfigs;
+if (process.env.ENV === 'PRODUCTION') {
+  pgConnectionConfigs = {
+    user: 'postgres',
+    password: process.env.DB_PASSWORD,
+    host: 'localhost',
+    database: 'eatout',
+    port: 5432,
+  };
+} else {
+  pgConnectionConfigs = {
+    user: 'michellemok',
+    host: 'localhost',
+    database: 'eatout',
+    port: 5432,
+  };
+}
+
+
+const pool = new Pool(pgConnectionConfigs);
 
 const app = express();
-const PORT = 3000;
+const PORT = process.argv[2];
+
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
