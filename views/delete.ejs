@@ -1,0 +1,34 @@
+<%- include ('partials/head') %>
+
+<div class="container add-friend d-flex flex-column">
+  <h2 style="font-weight: 100"> Edit your friends list</h2>
+  <table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">First</th>
+      <th scope="col">Last</th>
+      <th></th>
+      <th scope="col">Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+      
+      <% friendsDetails.forEach((friend) => { %>
+      <tr>
+        <td><%= friend.first_name %></td>
+        <td><%= friend.last_name %></td>
+        <td></td>
+        <td>
+          <form id="delete-button" action="/delete/<%= friend.id %>?_method=DELETE" method="POST">
+          <button class="btn btn-sm btn-outline" type="submit"><i class="fa fa-trash-alt"></i></button>
+          </form>
+        </td>      
+      </tr>
+      <% }) %>
+
+  </tbody>
+</table>
+</div>
+
+
+<%- include ('partials/footer') %>

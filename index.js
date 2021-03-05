@@ -4,8 +4,6 @@ import cookieParser from 'cookie-parser';
 import methodOverride from 'method-override';
 import jsSHA from 'jssha';
 
-const SALT = 'I love food';
-
 const { Pool } = pg;
 
 const pool = new Pool({
@@ -27,17 +25,7 @@ app.use(cookieParser());
 // arrays providing locations and budgets (global variable)
 const locations = [{ id: 1, name: 'North' }, { id: 2, name: 'East' }, { id: 3, name: 'South' }, { id: 4, name: 'West' }, { id: 5, name: 'Central' }];
 
-const budgets = [{ id: 1, amount: '< $20' }, { id: 2, amount: '< $50' }, { id: 3, amount: '< $100' }, { id: 4, amount: '< $150' }, { id: 5, amount: '> $150' }];
-
-// helper function for getting hashed cookie string
-const gettingHashedCookieString = (cookieUserId) => {
-  const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
-  console.log('SALT', SALT);
-  shaObj.update(`${cookieUserId}-${SALT}`);
-  const hashedCookieString = shaObj.getHash('HEX');
-  console.log('hashed cookie string', hashedCookieString);
-  return hashedCookieString;
-};
+const budgets = [{ id: 1, amount: '< $20' }, { id: 2, amount: '$20 - $50' }, { id: 3, amount: '$50 - $100' }, { id: 4, amount: '$100 - $150' }, { id: 5, amount: '> $150' }];
 
 // helper function for getting hashed password
 const getHashedPassword = (userPassword) => {
@@ -66,23 +54,17 @@ app.get('/register', (req, res) => {
 
 // submit user preference data to user_preferences table in database and user details to users table
 app.post('/register', (req, res) => {
-  // toggle button used for vegetarian and halal columns
-  if (!req.body.vegetarian) {
-    req.body.vegetarian = 'no';
-  }
-
-  if (!req.body.halal) {
-    req.body.halal = 'no';
-  }
-
   const userDetails = req.body;
   console.log('user details:', userDetails);
 
   const hashedPassword = getHashedPassword(req.body.password);
   console.log('hashed password:', hashedPassword);
 
+  const formattedPhoneNumber = '65' + req.body.phone_number;
+  console.log('format phone', formattedPhoneNumber);
+
   pool
-    .query('INSERT INTO users (first_name, last_name, email, password, phone_number, vegetarian, halal) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id', [req.body.first_name, req.body.last_name, req.body.email, hashedPassword, req.body.phone_number, req.body.vegetarian, req.body.halal])
+    .query('INSERT INTO users (first_name, last_name, email, password, phone_number) VALUES ($1, $2, $3, $4, $5) RETURNING id', [req.body.first_name, req.body.last_name, req.body.email, hashedPassword, formattedPhoneNumber])
     .then((result) => {
       const userId = result.rows[0].id;
       console.log('user id:', userId);
@@ -100,15 +82,33 @@ app.post('/register', (req, res) => {
 // render a page where the user can add to a friends list from the list of users
 app.get('/add', (req, res) => {
   const { loggedIn } = req.cookies;
-  const userListQuery = `SELECT * FROM users WHERE id != ${req.cookies.userId}`;
-  pool.query(userListQuery, (userListQueryError, userListQueryResult) => {
-    if (userListQueryError) {
-      console.log('error', userListQueryError);
-    } else {
-      const friendsList = userListQueryResult.rows;
-      res.render('add', { friendsList, loggedIn });
-    }
-  });
+  const userIdListArray = [];
+  const friendListArray = [];
+
+  pool
+    .query(`SELECT id FROM users WHERE id != ${req.cookies.userId}`)
+    .then((result) => {
+      result.rows.forEach((element) => {
+        userIdListArray.push(element.id);
+        console.log('user id list :', userIdListArray);
+      });
+      return pool.query(`SELECT friend_id FROM user_friends WHERE user_id = ${req.cookies.userId}`);
+    })
+    .then((result) => {
+      result.rows.forEach((friend) => {
+        friendListArray.push(friend.friend_id);
+        console.log('friend list:', friendListArray);
+      });
+      const displayList = userIdListArray.filter((id) => !friendListArray.includes(id));
+      console.log('display list', displayList);
+      return pool.query(`SELECT * FROM users WHERE id IN (${displayList.join(',')})`);
+    })
+    .then((result) => {
+      const friendDetails = result.rows;
+      console.log('friend details:', friendDetails);
+      res.render('add', { friendDetails, loggedIn });
+    })
+    .catch((error) => console.log('error', error));
 });
 
 // submit data to user_friends table in database
@@ -139,6 +139,43 @@ app.post('/add', (req, res) => {
   res.redirect('/choose');
 });
 
+// render a form to delete friends from friends list
+app.get('/delete', (req, res) => {
+
+  const { loggedIn } = req.cookies;
+  pool
+    .query(`SELECT friend_id FROM user_friends WHERE user_id = ${req.cookies.userId}`)
+    .then((result) => {
+      console.log(result.rows);
+      const friendsIds = [];
+      result.rows.forEach((friend) => {
+      friendsIds.push(friend.friend_id);
+      })
+      console.log('friend ids:', friendsIds);
+      return pool.query(`SELECT * FROM users WHERE id IN (${friendsIds.join(',')})`);
+    })
+    .then((result) => {
+      const friendsDetails = result.rows;
+      console.log (friendsDetails);
+      res.render('delete', { friendsDetails, loggedIn });
+    })
+    .catch((error) => (console.log('error', error)));
+});
+
+// delete friends from friend list
+app.delete('/delete/:id', (req, res) => {
+  const friendId = req.params.id;
+  pool.query(`DELETE FROM user_friends WHERE user_id = ${req.cookies.userId} AND friend_id = ${friendId} RETURNING *`, (error, result) => {
+    if (error) {
+      console.log('error', error);
+    } else {
+      console.log(result.rows);
+      res.redirect('/delete');
+    }
+  });
+
+})
+
 // render a page where the user selects criteria for choosing a restaurant
 app.get('/choose', (req, res) => {
   console.log('logged in', req.cookies.loggedIn);
@@ -148,11 +185,7 @@ app.get('/choose', (req, res) => {
   console.log(gettingHashedCookieString());
 
   const { loggedIn } = req.cookies;
-  if (req.cookies.loggedInHash !== gettingHashedCookieString()) {
-    res.status(403).send('please log in');
-  }
 
-  // TODO : change userid when user auth is done
   const getFriendDetails = `SELECT user_friends.friend_id, friends.first_name AS first_name, friends.last_name AS last_name FROM users INNER JOIN user_friends ON users.id = user_friends.user_id INNER JOIN users AS friends ON friends.id = user_friends.friend_id WHERE users.id = ${req.cookies.userId}`;
 
   pool.query(getFriendDetails, (getFriendDetailsError, getFriendDetailsResult) => {
@@ -175,9 +208,11 @@ app.post('/choose', (req, res) => {
   console.log(req.body);
 
   const cuisineIds = [];
+  let restaurantsArray = [];
   const locationId = Number(req.body.location);
   const budgetId = Number(req.body.budget);
   const { userId } = req.cookies;
+  const { loggedIn } = req.cookies;
 
   const friendIds = req.body.id;
   const friendIdsArray = [];
@@ -193,7 +228,7 @@ app.post('/choose', (req, res) => {
   console.log('friends ids array length:', friendIdsArray.length);
 
   pool
-    .query(`SELECT user_preferences.cuisine_id, users.vegetarian, users.halal
+    .query(`SELECT user_preferences.cuisine_id
     FROM users
     INNER JOIN user_preferences ON users.id = user_preferences.user_id
     WHERE users.id IN (${friendIdsArray.join(',')})`)
@@ -227,25 +262,120 @@ app.post('/choose', (req, res) => {
         }
       }
 
-      return pool.query(`SELECT DISTINCT restaurants.name, restaurants.address 
+      return pool.query(`SELECT DISTINCT restaurants.name, restaurants.address, restaurants.photo, restaurants.phone_number, restaurants.website
           FROM restaurants 
           INNER JOIN user_preferences ON restaurants.cuisine_id = user_preferences.cuisine_id WHERE restaurants.cuisine_id IN (${distinctWinningChoices.join(',')}) AND restaurants.location_id = ${locationId} AND restaurants.budget_id = ${budgetId}`);
     })
     .then((result) => {
       console.log(result.rows);
-      const restaurantsArray = result.rows;
+      restaurantsArray = result.rows;
       console.log('restaurantsArray:', restaurantsArray);
       console.log('done');
-      res.render('results', { restaurantsArray });
-    })
 
+      return pool.query(`SELECT phone_number, first_name FROM users WHERE id IN (${friendIdsArray.join(',')})`);
+    })
+    .then((result) => {
+      const friendPhoneNumbers = result.rows;
+      console.log(friendPhoneNumbers);
+      res.render('results', { restaurantsArray, loggedIn, friendPhoneNumbers });
+    })
     .catch((error) => console.log('error', error));
 });
 
-app.get('/edit/:id', (req, res) => {
+// renders a form that allows users to edit their information
+app.get('/edit', (req, res) => {
   const { userId } = req.cookies;
   const { loggedIn } = req.cookies;
-  const getUserDetails = 'SELECT * FROM users WHERE ';
+
+  const userCuisineIds = [];
+  let userDetails;
+  const userCuisineNames = [];
+
+  pool
+    .query(`SELECT * FROM users WHERE id = ${userId}`)
+    .then((result) => {
+      userDetails = result.rows[0];
+      console.log('user details', userDetails);
+      return pool.query(`SELECT cuisine_id FROM user_preferences WHERE user_id = ${userId}`);
+    })
+    .then((result) => {
+      console.log('cuisine ids', result.rows);
+      result.rows.forEach((element) => {
+        userCuisineIds.push(element.cuisine_id);
+      });
+
+      console.log('cuisine ids', userCuisineIds);
+      return pool.query(`SELECT name FROM cuisines WHERE id IN (${userCuisineIds.join(',')})`);
+    })
+    .then((result) => {
+      result.rows.forEach((element) => {
+        userCuisineNames.push(element.name);
+      });
+      console.log('user cuisine names:', userCuisineNames);
+      return pool.query('SELECT name FROM cuisines');
+    })
+    .then((result) => {
+      console.log('cuisine names', result.rows);
+      const allCuisinesNames = [];
+      result.rows.forEach((element) => {
+        allCuisinesNames.push(element.name);
+      });
+      console.log('all cuisines names', allCuisinesNames);
+      console.log('user details', userDetails);
+      res.render('edit', {
+        userCuisineNames, loggedIn, userDetails, allCuisinesNames,
+      });
+    })
+    .catch((error) => console.log('error', error));
+});
+
+// submits changed user information to the database
+app.put('/edit', (req, res) => {
+  const id = req.cookies.userId;
+
+  console.log('updated info:', req.body);
+  const editUserDetails = `UPDATE users SET first_name = '${req.body.first_name}', last_name = '${req.body.last_name}', email = '${req.body.email}', phone_number = ${Number(req.body.phone_number)} WHERE id = ${id} RETURNING *`;
+
+  pool.query(editUserDetails, (editUserDetailsError, editUserDetailsResult) => {
+    if (editUserDetailsError) {
+      console.log('error', editUserDetailsError);
+    } else {
+      console.log('new details', editUserDetailsResult.rows);
+    }
+  });
+
+  pool.query(`DELETE FROM user_preferences WHERE user_id = ${id} RETURNING *`, (deleteError, deleteResult) => {
+    if (deleteError) {
+      console.log('error', deleteError);
+    } else {
+      console.log(deleteResult.rows);
+
+      const cuisineNames = req.body.cuisine_name;
+
+      for (let i = 0; i < cuisineNames.length; i += 1) {
+        pool.query(`SELECT id FROM cuisines WHERE name = '${cuisineNames[i]}'`, (error, result) => {
+          if (error) {
+            console.log('error', error);
+          } else {
+            console.log('cuisine id:', result.rows);
+            const cuisineId = result.rows[0].id;
+            console.log(cuisineId);
+
+            pool.query('INSERT INTO user_preferences (user_id, cuisine_id) VALUES ($1, $2)', [id, cuisineId], (insertError, insertResult) => {
+              if (insertError) {
+                console.log('error', error);
+              } else {
+                console.log('done');
+                if (i === cuisineNames.length - 1) {
+                  res.redirect('/choose');
+                }
+              }
+            });
+          }
+        });
+      }
+    }
+  });
 });
 
 // user login
@@ -277,8 +407,6 @@ app.post('/login', (req, res) => {
     if (hashedPassword === result.rows[0].password) {
       res.cookie('loggedIn', true);
       res.cookie('userId', result.rows[0].id);
-
-      res.cookie('loggedInHash', gettingHashedCookieString(req.body.id));
 
       res.redirect('/choose');
     } else {

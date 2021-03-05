@@ -7,10 +7,19 @@
       <div class="col">
         <p><%= restaurant.name %></p>
         <p><%= restaurant.address %></p>
+        <p><a href="<%= restaurant.website %>">restaurant website</a></p>
+        <p><%= restaurant.phone_number %></p> 
+
+        <% friendPhoneNumbers.forEach((number) => { %>
+        <a href="https://wa.me/<%= number.phone_number %>/?We%are%going%to%<%= restaurant.name %>">Click here to send a Whatsapp message to <%= number.first_name %></a>
+        <% }) %>
+
+        <p><img class="img-fluid" src="<%= restaurant.photo %>"></p>
       </div>
     </div>
   <% }) %>
- 
+  
+
 </div>
 
 

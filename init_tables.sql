@@ -2,10 +2,9 @@ CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   first_name TEXT,
   last_name TEXT,
-  email TEXT,
+  email TEXT, 
   password TEXT,
-  vegetarian TEXT,
-  halal TEXT,
+  phone_number BIGINT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -36,6 +35,8 @@ CREATE TABLE IF NOT EXISTS restaurants (
   budget_id INTEGER,
   location_id INTEGER,
   address TEXT,
+  photo TEXT,
+  website TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
