@@ -1,3 +1,118 @@
-.edit-form {
-  height: 80vh;
+body {
+  height: 100vh;
+}
+
+/* register form */
+.register-header {
+  font-weight: 100;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.cuisines {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: lightgrey solid 1px;
+}
+
+.user-details {
+  padding-bottom: 20px;
+}
+
+/* choose page */
+.choose-header {
+  font-weight: 100;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.choose-form {
+  padding-top: 20px;
+}
+
+#add-friend-link {
+  color: rgb(164, 161, 161);
+}
+
+/* edit friend list page */
+.edit-header {
+  font-weight: 100;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/*  edit user details */
+.edit-details {
+  padding-top: 50px;
+  padding-bottom: 20px;
+  border-top: lightgrey solid 1px;
+}
+
+.edit-cuisines {
+  padding-bottom: 30px;
+}
+
+/* log in page */
+.login {
+  font-weight: 100;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* delete friends */
+.delete {
+  font-weight: 100;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.delete-friend {
+  padding-top: 30px;
+}
+
+/* add friends page */
+.add-header {
+  font-weight: 100;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.add-friend {
+  padding-bottom: 30px;
+}
+
+.add-button {
+  margin-top: 30px;
+}
+
+/* results page */
+#whatsapp {
+  height: 30px;
+  width: 40px;
+}
+
+.first-choice {
+  padding: 30px;
+  border-bottom: grey solid 2px;
+}
+
+.first-choice-photo {
+  width: 100%;
+  height: auto;
+}
+
+.second-choice {
+  padding: 30px;
+}
+
+.second-choice-photo {
+  width: 100%;
+  height: auto;
+}
+
+/* no results */
+.no-results {
+  font-weight: 100;
+  padding-top: 100px;
+  padding-bottom: 20px;
 }

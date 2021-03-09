@@ -1,15 +1,21 @@
 <%- include ('partials/head') %>
 
 <div class="container">
-  <a href="/add">Add friends here</a>
+  <div class="jumbotron choose-header">
+    <h2 class="display-4">Make your choices</h2>
+  </div>
+</div>
+<div class="container choose-form">
   <form action="/choose" method="POST">
     <div class="row mb-3">
       <label for="id" class="col-sm-2 col-form-label">Friend 1</label>
       <div class="col-sm-10">
         <select class="form-select" name="id">
-          <option selected>Select friend </option>
+          <option selected>Select friend</option>
           <% friendDetailsArray.forEach((friend) => { %>
-          <option value="<%=friend.friend_id%>"><%= friend.first_name %>, <%= friend.last_name %></option>
+          <option value="<%=friend.friend_id%>">
+            <%= friend.first_name %>, <%= friend.last_name %>
+          </option>
           <% }) %>
         </select>
       </div>
@@ -18,20 +24,11 @@
       <label for="id" class="col-sm-2 col-form-label">Friend 2</label>
       <div class="col-sm-10">
         <select class="form-select" name="id">
-          <option selected>Select friend </option>
+          <option selected>Select friend</option>
           <% friendDetailsArray.forEach((friend) => { %>
-          <option value="<%=friend.friend_id%>"><%= friend.first_name %>, <%= friend.last_name %></option>
-          <% }) %>
-        </select>
-      </div>
-    </div>
-<div class="row mb-3">
-      <label for="id" class="col-sm-2 col-form-label">Friend 3</label>
-      <div class="col-sm-10">
-        <select class="form-select" name="id">
-          <option selected>Select friend </option>
-          <% friendDetailsArray.forEach((friend) => { %>
-          <option value="<%=friend.friend_id%>"><%= friend.first_name %>, <%= friend.last_name %></option>
+          <option value="<%=friend.friend_id%>">
+            <%= friend.first_name %>, <%= friend.last_name %>
+          </option>
           <% }) %>
         </select>
       </div>
@@ -40,9 +37,9 @@
       <label for="location" class="col-sm-2 col-form-label">Location</label>
       <div class="col-sm-10">
         <select class="form-select" name="location">
-          <option selected>Choose location </option>
+          <option selected>Choose location</option>
           <% locations.forEach((location) => { %>
-            <option value="<%= location.id %>"><%= location.name %></option>
+          <option value="<%= location.id %>"><%= location.name %></option>
           <% }) %>
         </select>
       </div>
@@ -51,14 +48,21 @@
       <label for="budget" class="col-sm-2 col-form-label">Budget</label>
       <div class="col-sm-10">
         <select class="form-select" name="budget">
-          <option selected>Choose budget </option>
+          <option selected>Choose budget</option>
           <% budgets.forEach((budget) => { %>
-            <option value="<%= budget.id %>"><%= budget.amount %></option>
+          <option value="<%= budget.id %>"><%= budget.amount %></option>
           <% }) %>
         </select>
       </div>
     </div>
-    <button class="btn btn-outline-info" type="submit">Let's go!</button>
+    <a href="/add" id="add-friend-link">Add more friends here</a>
+    <br />
+    <br />
+    <div class="row">
+      <div class="col d-flex justify-content-end">
+        <button class="btn btn-outline-info" type="submit">Let's go!</button>
+      </div>
+    </div>
   </form>
 </div>
 

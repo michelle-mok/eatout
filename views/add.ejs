@@ -1,41 +1,48 @@
 <%- include ('partials/head') %>
 
-<div class="container add-friend d-flex flex-column">
-  <h2 style="font-weight: 100"> Add your friends</h2>
-  <table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">email</th>
-      <th scope="col">Add</th>
-    </tr>
-  </thead>
-  <tbody>
-    <form action="/add" method="POST">
-      
-      <% friendDetails.forEach((friend) => { %>
-      <tr>
-        <td><%= friend.first_name %></td>
-        <td><%= friend.last_name %></td>
-        <td><%= friend.email %></td>
-        <td>
-          
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="id" value="<%= friend.id %>">
-                <label class="form-check-label" for="id"></label>
-            </div>
-            
-        </td>
-      </tr>
-      <% }) %>
-      <br>
-      <br>
-      <button class="btn btn-secondary order-3" type="submit">Add friends!</button>
-    </form>
-  </tbody>
-</table>
+<div class="container add-header">
+  <div class="jumbotron"></div>
+    <h2 class="display-4">Add your friends</h2>
+  </div>
 </div>
-
+<div class="container add-friend d-flex flex-column">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">First</th>
+        <th scope="col">Last</th>
+        <th scope="col" class="d-none d-sm-block">email</th>
+        <th scope="col">Add</th>
+      </tr>
+    </thead>
+    <tbody>
+      <form action="/add" method="POST">
+        <% friendDetails.forEach((friend) => { %>
+        <tr>
+          <td><%= friend.first_name %></td>
+          <td><%= friend.last_name %></td>
+          <td class="d-none d-sm-block"><%= friend.email %></td>
+          <td>
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="id"
+                value="<%= friend.id %>"
+              />
+              <label class="form-check-label" for="id"></label>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+        <br />
+        <br />
+        <button class="btn btn-outline-info order-3 add-button" type="submit">
+          Add friends!
+        </button>
+      </form>
+    </tbody>
+  </table>
+</div>
 
 <%- include ('partials/footer') %>

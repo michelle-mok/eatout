@@ -38,9 +38,9 @@ app.use(methodOverride('_method'));
 app.use(cookieParser());
 
 // arrays providing locations and budgets (global variable)
-const locations = [{ id: 1, name: 'North' }, { id: 2, name: 'East' }, { id: 3, name: 'South' }, { id: 4, name: 'West' }, { id: 5, name: 'Central' }];
+const locations = [{ id: 1, name: 'North' }, { id: 2, name: 'East' }, { id: 3, name: 'South' }, { id: 4, name: 'West' }];
 
-const budgets = [{ id: 1, amount: '< $20' }, { id: 2, amount: '$20 - $50' }, { id: 3, amount: '$50 - $100' }, { id: 4, amount: '$100 - $150' }, { id: 5, amount: '> $150' }];
+const budgets = [{ id: 1, amount: '< $20' }, { id: 2, amount: '$20 - $50' }, { id: 3, amount: '$50 - $100' }, { id: 4, amount: '$100 - $150' }];
 
 // helper function for getting hashed password
 const getHashedPassword = (userPassword) => {
@@ -54,7 +54,11 @@ const getHashedPassword = (userPassword) => {
 
 // render a registration form to get user preferences and details
 app.get('/register', (req, res) => {
+
+  // loggedIn === false as user is not yet logged in. Navbar shows log in instead of logout button 
   const { loggedIn } = req.cookies;
+
+  // renders a list of cuisines for the user to select from 
   const getCuisineTypes = 'SELECT * FROM cuisines';
 
   pool.query(getCuisineTypes, (getCuisineTypesError, getCuisineTypesResult) => {
@@ -62,7 +66,8 @@ app.get('/register', (req, res) => {
       console.log('error', getCuisineTypesError);
     } else {
       const cuisineTypes = getCuisineTypesResult.rows;
-      res.render('register.ejs', { cuisineTypes, loggedIn });
+
+      res.render('register', { cuisineTypes, loggedIn });
     }
   });
 });
@@ -72,16 +77,20 @@ app.post('/register', (req, res) => {
   const userDetails = req.body;
   console.log('user details:', userDetails);
 
+  // hash user's password
   const hashedPassword = getHashedPassword(req.body.password);
   console.log('hashed password:', hashedPassword);
 
+  // format user's phone number so that the number can be used to send a whatsapp message
   const formattedPhoneNumber = '65' + req.body.phone_number;
   console.log('format phone', formattedPhoneNumber);
+
+  let userId;
 
   pool
     .query('INSERT INTO users (first_name, last_name, email, password, phone_number) VALUES ($1, $2, $3, $4, $5) RETURNING id', [req.body.first_name, req.body.last_name, req.body.email, hashedPassword, formattedPhoneNumber])
     .then((result) => {
-      const userId = result.rows[0].id;
+      userId = result.rows[0].id;
       console.log('user id:', userId);
       return userDetails.cuisine.forEach((cuisineId) => {
         pool.query('INSERT INTO user_preferences (user_id, cuisine_id) VALUES ($1, $2)', [userId, cuisineId]);
@@ -89,9 +98,57 @@ app.post('/register', (req, res) => {
     })
     .then((result) => {
       console.log('done');
-      res.redirect('/login');
+
+      // log user in after registration
+      res.cookie('loggedIn', true);
+      res.cookie('userId', userId);
+
+      // takes user to page where friends are added
+      res.redirect('/add');
     })
     .catch((error) => console.log('error', error));
+});
+
+// user login, renders the login page
+app.get('/login', (req, res) => {
+  const { loggedIn } = req.cookies;
+  res.render('login', { loggedIn });
+});
+
+// submit info on login form to log user in 
+app.post('/login', (req, res) => {
+  console.log(req.body);
+  console.log('email:', req.body.email);
+  pool.query(`SELECT * FROM users WHERE email = '${req.body.email}'`, (error, result) => {
+    if (error) {
+      console.log('error', error);
+      res.status(503).send('something went wrong');
+      return;
+    }
+
+    console.log(result.rows);
+
+    // situation where email address doesn't exist in the database
+    if (result.rows.length === 0) {
+      res.status(403).send('somethings wrong');
+      return;
+    }
+
+    console.log('password', result.rows[0].password);
+
+    // hash password so that it can be compared to password in the database
+    const hashedPassword = getHashedPassword(req.body.password);
+
+    // checking hashed password against hashed password in the database, if identical, the user is logged in 
+    if (hashedPassword === result.rows[0].password) {
+      res.cookie('loggedIn', true);
+      res.cookie('userId', result.rows[0].id);
+
+      res.redirect('/choose');
+    } else {
+      res.status(403).send('unsuccessful');
+    }
+  });
 });
 
 // render a page where the user can add to a friends list from the list of users
@@ -101,12 +158,14 @@ app.get('/add', (req, res) => {
   const friendListArray = [];
 
   pool
+    // get all users besides current user
     .query(`SELECT id FROM users WHERE id != ${req.cookies.userId}`)
     .then((result) => {
       result.rows.forEach((element) => {
         userIdListArray.push(element.id);
         console.log('user id list :', userIdListArray);
       });
+      // get users that are already in current user's friend list
       return pool.query(`SELECT friend_id FROM user_friends WHERE user_id = ${req.cookies.userId}`);
     })
     .then((result) => {
@@ -114,8 +173,16 @@ app.get('/add', (req, res) => {
         friendListArray.push(friend.friend_id);
         console.log('friend list:', friendListArray);
       });
+
       const displayList = userIdListArray.filter((id) => !friendListArray.includes(id));
       console.log('display list', displayList);
+      
+      // if all contacts are already on friend's list, user is redirected
+      if (displayList.length < 1) {
+        res.redirect('/choose');
+      }
+
+      // display list of contacts that are not already in friends list
       return pool.query(`SELECT * FROM users WHERE id IN (${displayList.join(',')})`);
     })
     .then((result) => {
@@ -197,8 +264,7 @@ app.get('/choose', (req, res) => {
   console.log('userId', req.cookies.userId);
   console.log('req.body.id', req.body.id);
   console.log(req.cookies.loggedInHash);
-  console.log(gettingHashedCookieString());
-
+  
   const { loggedIn } = req.cookies;
 
   const getFriendDetails = `SELECT user_friends.friend_id, friends.first_name AS first_name, friends.last_name AS last_name FROM users INNER JOIN user_friends ON users.id = user_friends.user_id INNER JOIN users AS friends ON friends.id = user_friends.friend_id WHERE users.id = ${req.cookies.userId}`;
@@ -218,7 +284,7 @@ app.get('/choose', (req, res) => {
   });
 });
 
-// submits user info that will be criteria for choosing restauran
+// submits user info that will be criteria for choosing restaurant
 app.post('/choose', (req, res) => {
   console.log(req.body);
 
@@ -277,6 +343,9 @@ app.post('/choose', (req, res) => {
         }
       }
 
+      console.log(locationId);
+      console.log(budgetId);
+      console.log(distinctWinningChoices.join(','));
       return pool.query(`SELECT DISTINCT restaurants.name, restaurants.address, restaurants.photo, restaurants.phone_number, restaurants.website
           FROM restaurants 
           INNER JOIN user_preferences ON restaurants.cuisine_id = user_preferences.cuisine_id WHERE restaurants.cuisine_id IN (${distinctWinningChoices.join(',')}) AND restaurants.location_id = ${locationId} AND restaurants.budget_id = ${budgetId}`);
@@ -286,6 +355,11 @@ app.post('/choose', (req, res) => {
       restaurantsArray = result.rows;
       console.log('restaurantsArray:', restaurantsArray);
       console.log('done');
+
+      if (restaurantsArray.length === 0) {
+        res.render('no-results', { loggedIn });
+        return;
+      }
 
       return pool.query(`SELECT phone_number, first_name FROM users WHERE id IN (${friendIdsArray.join(',')})`);
     })
@@ -438,6 +512,4 @@ app.delete('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-app.listen(PORT, () => {
-  console.log('listening on port 3000');
-});
+app.listen(PORT);

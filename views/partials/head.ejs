@@ -9,7 +9,12 @@
     />
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+      crossorigin="anonymous"
+    />
 
     <link
       rel="stylesheet"
@@ -21,41 +26,56 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(156, 230, 247)">
+    <nav
+      class="navbar navbar-expand-lg navbar-light"
+      style="background-color: rgb(156, 230, 247)"
+    >
       <div class="container-fluid">
-      <a class="navbar-brand" href="/choose"><i class="fas fa-utensils"></i>   Eat Out</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" href="/edit">Edit your details</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/register">Register</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/add">Add friends</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/delete">Remove friends</a>
-        </li>
-        <% if (loggedIn) { %>
-        <form action="/logout?_method=DELETE" method="POST">
-          <button type="submit" class="btn btn-outline-dark btn btn-md">
-            Logout
-          </button>
-        </form>
-        <% } else { %>
-        <li class="nav-item">
-          <a class="nav-link" href="/login">Log in</a>
-        </li>
-        <% } %>
-      </ul>
-      </div>
+        <a class="navbar-brand" href="/choose"
+          ><i class="fas fa-utensils"></i> Eat Out</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/edit">Edit your details</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/register">Register</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/add">Add friends</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/delete">Remove friends</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/choose">Select restaurant</a>
+            </li>
+            <% if (loggedIn) { %>
+            <form action="/logout?_method=DELETE" method="POST">
+              <button type="submit" class="btn btn-outline-dark btn btn-md">
+                Logout
+              </button>
+            </form>
+            <% } else { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Log in</a>
+            </li>
+            <% } %>
+          </ul>
+        </div>
       </div>
     </nav>
-
-
-  
+  </body>
+</html>

@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS restaurants (
   budget_id INTEGER,
   location_id INTEGER,
   address TEXT,
+  phone_number BIGINT,
   photo TEXT,
   website TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

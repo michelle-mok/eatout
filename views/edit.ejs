@@ -1,14 +1,16 @@
 <%- include ('partials/head') %>
 
 <div class="container edit-form">
-  <div class="row justify-content-center align-items-center">
-    <div class="col-12 col-md-10">
-      <h2>Edit form</h2>
-      <p>Want to change something?</p>
+  <div class="jumbotron edit-header">
+    <h2 class="display-4">Edit form</h2>
+    <p>Want to change something?</p>
+  </div>
 
-      <form class="entry-form-container" action="/edit?_method=PUT" method="POST">
+      
+
+      <form class="container edit-cuisines" action="/edit?_method=PUT" method="POST">
         <% allCuisinesNames.forEach((cuisine) => { %>
-        <div class="form-check form-check-inline">
+        <div class="form-check form-switch">
         <% if (userCuisineNames.includes(cuisine)) { %>
         <input class="form-check-input" type="checkbox" name="cuisine_name" value="<%= cuisine %>" id="cuisine_name" checked>
         <% } else { %>
@@ -17,49 +19,46 @@
         <label class="form-check-label" for="cuisine_name">
         <%= cuisine %>
         </label>
+        <br><br>
         </div>
         <% }) %>
-    </div>
   </div> 
 
-  <div class="row">
-    <div class="col">
-      <div class="form-group">
-        <label for="first_name">First name </label>
-        <input class="form-control" name="first_name" value="<%= userDetails.first_name %>">
-      </div>
+  <div class="container edit-details">
+  <div class="row mb-3">
+    <label for="first_name" class="col-sm-2 col-form-label">First name </label>
+    <div class="col-sm-10">
+      <input class="form-control" name="first_name" value="<%= userDetails.first_name %>">
     </div>
   </div>
 
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
-          <label for="last_name">Last name </label>
-          <input class="form-control" name="last_name" value="<%= userDetails.last_name %>">
-        </div>
+    <div class="row mb-3">
+      <label for="last_name" class="col-sm-2 col-form-label">Last name </label>
+      <div class="col-sm-10">
+        <input class="form-control" name="last_name" value="<%= userDetails.last_name %>">
       </div>
     </div>
 
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
-          <label for="email">Email </label>
-          <input class="form-control" name="email" value="<%= userDetails.email %>">
-        </div>
+    <div class="row mb-3">
+      <label for="email" class="col-sm-2 col-form-label">Email </label>
+      <div class="col-sm-10">
+        <input class="form-control" name="email" value="<%= userDetails.email %>">
       </div>
     </div>
 
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
-          <label for="phone_number">Phone number </label>
-          <input class="form-control" name="phone_number" value="<%= userDetails.phone_number %>">
-        </div>
+    <div class="row mb-3">
+      <label for="phone_number" class="col-sm-2 col-form-label">Phone number </label>
+      <div class="col-sm-10">
+        <input class="form-control" name="phone_number" value="<%= userDetails.phone_number %>">
       </div>
     </div>
 
     <br><br>
-    <button type="submit" class="btn btn-secondary btn-block">Submit</button>
+    <div class="row mb-3">
+      <div class="col d-flex justify-content-end">
+    <button type="submit" class="btn btn-outline-info btn-block">Update details</button>
+      </div>
+    </div>
     </form>
   </div>
 

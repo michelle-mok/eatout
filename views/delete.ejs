@@ -1,34 +1,42 @@
 <%- include ('partials/head') %>
 
-<div class="container add-friend d-flex flex-column">
-  <h2 style="font-weight: 100"> Edit your friends list</h2>
+<div class="container delete">
+  <div class="jumbotron">
+    <h2 class="display-4">Edit your friends list</h2>
+  </div>
+</div>
+<div class="container delete-friend">
   <table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th></th>
-      <th scope="col">Delete</th>
-    </tr>
-  </thead>
-  <tbody>
-      
+    <thead>
+      <tr>
+        <th scope="col">First name</th>
+        <th scope="col">Last name</th>
+        <th></th>
+        <th scope="col" class="text-center">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
       <% friendsDetails.forEach((friend) => { %>
       <tr>
         <td><%= friend.first_name %></td>
         <td><%= friend.last_name %></td>
         <td></td>
         <td>
-          <form id="delete-button" action="/delete/<%= friend.id %>?_method=DELETE" method="POST">
-          <button class="btn btn-sm btn-outline" type="submit"><i class="fa fa-trash-alt"></i></button>
+          <form
+            id="delete-button"
+            class="text-center"
+            action="/delete/<%= friend.id %>?_method=DELETE"
+            method="POST"
+          >
+            <button class="btn btn-sm btn-outline" type="submit">
+              <i class="fa fa-trash-alt"></i>
+            </button>
           </form>
-        </td>      
+        </td>
       </tr>
       <% }) %>
-
-  </tbody>
-</table>
+    </tbody>
+  </table>
 </div>
-
 
 <%- include ('partials/footer') %>
