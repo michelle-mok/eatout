@@ -103,6 +103,18 @@ insert into users (first_name, last_name, email, password, phone_number) values 
 UPDATE users SET password = '0dd3e512642c97ca3f747f9a76e374fbda73f9292823c0313be9d78add7cdd8f72235af0c553dd26797e78e1854edee0ae002f8aba074b066dfce1af114e32f8';
 
 
+INSERT INTO cuisines (name) VALUES ('Japanese');
+INSERT INTO cuisines (name) VALUES ('Korean');
+INSERT INTO cuisines (name) VALUES ('Malay');
+INSERT INTO cuisines (name) VALUES ('Chinese');
+INSERT INTO cuisines (name) VALUES ('Spanish/ Mexican');
+INSERT INTO cuisines (name) VALUES ('Western');
+INSERT INTO cuisines (name) VALUES ('Italian');
+INSERT INTO cuisines (name) VALUES ('Indian');
+INSERT INTO cuisines (name) VALUES ('Thai');
+
+
+
 insert into user_friends (user_id, friend_id) values (1, 2);
 insert into user_friends (user_id, friend_id) values (1, 44);
 insert into user_friends (user_id, friend_id) values (1, 25);
@@ -391,6 +403,8 @@ insert into user_friends (user_id, friend_id) values (35, 12);
 insert into user_friends (user_id, friend_id) values (35, 10);
 
 
+
+
 insert into user_preferences (user_id, cuisine_id) values (1, 1);
 insert into user_preferences (user_id, cuisine_id) values (1, 5);
 insert into user_preferences (user_id, cuisine_id) values (1, 6);
@@ -609,15 +623,6 @@ insert into user_preferences (user_id, cuisine_id) values (50, 1);
 
 
 
-INSERT INTO cuisines (name) VALUES ('Japanese');
-INSERT INTO cuisines (name) VALUES ('Korean');
-INSERT INTO cuisines (name) VALUES ('Malay');
-INSERT INTO cuisines (name) VALUES ('Chinese');
-INSERT INTO cuisines (name) VALUES ('Spanish/ Mexican');
-INSERT INTO cuisines (name) VALUES ('Western');
-INSERT INTO cuisines (name) VALUES ('Italian');
-INSERT INTO cuisines (name) VALUES ('Indian');
-INSERT INTO cuisines (name) VALUES ('Thai');
 
 INSERT INTO restaurants (name, cuisine_id, budget_id, location_id, address, phone_number, photo, website) VALUES ('La Tapería', 5, 3, 3, '1 Scotts Rd, #02 - 10 / 11, Singapore 228208', 67378336, '/lataperia.jpg', 'https://www.lataperia.com.sg/' );
 INSERT INTO restaurants (name, cuisine_id, budget_id, location_id, address, phone_number, photo, website) VALUES ('Esquina', 5, 4, 3, '16 Jiak Chuan Rd, Singapore 089267', 62221616,'/esquina.jpg', 'https://esquina.com.sg/');
