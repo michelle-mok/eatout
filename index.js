@@ -110,13 +110,13 @@ app.post('/register', (req, res) => {
 });
 
 // user login, renders the login page
-app.get('/login', (req, res) => {
+app.get('/', (req, res) => {
   const { loggedIn } = req.cookies;
   res.render('login', { loggedIn });
 });
 
 // submit info on login form to log user in 
-app.post('/login', (req, res) => {
+app.post('/', (req, res) => {
   console.log(req.body);
   console.log('email:', req.body.email);
   pool.query(`SELECT * FROM users WHERE email = '${req.body.email}'`, (error, result) => {
@@ -156,6 +156,11 @@ app.get('/add', (req, res) => {
   const { loggedIn } = req.cookies;
   const userIdListArray = [];
   const friendListArray = [];
+
+  if (!loggedIn) {
+    res.redirect('/');
+    return;
+  }
 
   pool
     // get all users besides current user
@@ -225,6 +230,12 @@ app.post('/add', (req, res) => {
 app.get('/delete', (req, res) => {
 
   const { loggedIn } = req.cookies;
+
+  if (!loggedIn) {
+    res.redirect('/');
+    return;
+  }
+
   pool
     .query(`SELECT friend_id FROM user_friends WHERE user_id = ${req.cookies.userId}`)
     .then((result) => {
@@ -266,6 +277,11 @@ app.get('/choose', (req, res) => {
   console.log(req.cookies.loggedInHash);
   
   const { loggedIn } = req.cookies;
+
+  if (!loggedIn) {
+    res.redirect('/');
+    return;
+  }
 
   const getFriendDetails = `SELECT user_friends.friend_id, friends.first_name AS first_name, friends.last_name AS last_name FROM users INNER JOIN user_friends ON users.id = user_friends.user_id INNER JOIN users AS friends ON friends.id = user_friends.friend_id WHERE users.id = ${req.cookies.userId}`;
 
@@ -376,6 +392,11 @@ app.get('/edit', (req, res) => {
   const { userId } = req.cookies;
   const { loggedIn } = req.cookies;
 
+  if (!loggedIn) {
+    res.redirect('/');
+    return;
+  }
+
   const userCuisineIds = [];
   let userDetails;
   const userCuisineNames = [];
@@ -467,42 +488,6 @@ app.put('/edit', (req, res) => {
   });
 });
 
-// user login
-app.get('/login', (req, res) => {
-  const { loggedIn } = req.cookies;
-  res.render('login', { loggedIn });
-});
-
-app.post('/login', (req, res) => {
-  console.log(req.body);
-  console.log('email:', req.body.email);
-  pool.query(`SELECT * FROM users WHERE email = '${req.body.email}'`, (error, result) => {
-    if (error) {
-      console.log('error', error);
-      res.status(503).send('something went wrong');
-      return;
-    }
-
-    console.log(result.rows);
-    if (result.rows.length === 0) {
-      res.status(403).send('somethings wrong');
-      return;
-    }
-
-    console.log('password', result.rows[0].password);
-
-    const hashedPassword = getHashedPassword(req.body.password);
-
-    if (hashedPassword === result.rows[0].password) {
-      res.cookie('loggedIn', true);
-      res.cookie('userId', result.rows[0].id);
-
-      res.redirect('/choose');
-    } else {
-      res.status(403).send('unsuccessful');
-    }
-  });
-});
 
 // user logout
 app.delete('/logout', (req, res) => {
