@@ -27,7 +27,7 @@ if (process.env.ENV === 'PRODUCTION') {
 const pool = new Pool(pgConnectionConfigs);
 
 const app = express();
-const PORT = process.argv[2];
+const PORT = process.env.PORT || 3004;
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -481,6 +481,7 @@ app.post('/choose', (req, res) => {
       console.log('restaurantsArray:', restaurantsArray);
       console.log('done');
 
+      // if there are no suitable restaurants found
       if (restaurantsArray.length === 0) {
         res.render('no-results', { loggedIn, count });
         return;
@@ -491,6 +492,7 @@ app.post('/choose', (req, res) => {
         console.log('chosen restaurant', chosenRestaurant);
 
       }
+      // display one restaurant for the user
       if (restaurantsArray.length > 1) {
         const randomNumber = Math.floor(Math.random * (restaurantsArray.length));
         chosenRestaurant = restaurantsArray[randomNumber];

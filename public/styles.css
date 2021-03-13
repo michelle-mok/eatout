@@ -121,3 +121,10 @@ body {
 .notifications {
   background-color: rgb(235, 163, 163);
 }
+
+/* result page */
+.result-page {
+  font-weight: 100;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
