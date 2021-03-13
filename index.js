@@ -7,13 +7,13 @@ import jsSHA from 'jssha';
 const { Pool } = pg;
 
 let pgConnectionConfigs;
-if (process.env.ENV === 'PRODUCTION') {
+if (process.env.DATABASE_URL) {
+  // pg will take in the entire value and use it to connect
   pgConnectionConfigs = {
-    user: 'postgres',
-    password: process.env.DB_PASSWORD,
-    host: 'localhost',
-    database: 'eatout',
-    port: 5432,
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    }
   };
 } else {
   pgConnectionConfigs = {
