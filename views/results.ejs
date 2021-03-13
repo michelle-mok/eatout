@@ -1,29 +1,29 @@
 <%- include ('partials/head') %>
 
 <div class="container">
-  <% restaurantsArray.forEach((restaurant) => { %>
+  
   <div class="row d-flex justify-content-center text-center first-choice">
     <div class="col-12">
-      <p><%= restaurant.name %></p>
-      <p><%= restaurant.address %></p>
+      <p><%= chosenRestaurant.name %></p>
+      <p><%= chosenRestaurant.address %></p>
       <p>
-        <a href="<%= restaurant.website %>">restaurant website</a>
+        <a href="<%= chosenRestaurant.website %>">Restaurant website</a>
       </p>
-      <p><%= restaurant.phone_number %></p>
+      <p><%= chosenRestaurant.phone_number %></p>
 
       <% friendPhoneNumbers.forEach((number) => { %>
       <a
-        href="https://wa.me/<%= number.phone_number %>/?We%are%going%to%<%= restaurant.name %>"
+        href="https://wa.me/<%= number.phone_number %>/?text=We are going to <%= chosenRestaurant.name %> at <%= chosenRestaurant.address %>" target="_blank" rel="noopener noreferrer"
         ><img id="whatsapp" src="/whatsapp.jpg" /><%= number.first_name %></a
       >
       <br />
     </div>
     <% }) %>
     <p>
-      <img class="first-choice-photo" src="<%= restaurant.photo %>" />
+      <img class="first-choice-photo" src="<%= chosenRestaurant.photo %>" />
     </p>
   </div>
-  <% }) %>
+  
 </div>
 
 <%- include ('partials/footer') %>

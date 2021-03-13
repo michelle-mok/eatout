@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS user_friends (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users (id),
   friend_id INTEGER REFERENCES users (id),
+  added BOOLEAN,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

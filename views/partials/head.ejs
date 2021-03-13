@@ -50,17 +50,26 @@
             <li class="nav-item">
               <a class="nav-link" href="/edit">Edit your details</a>
             </li>
+            <% if (!loggedIn) { %>
             <li class="nav-item">
               <a class="nav-link" href="/register">Register</a>
             </li>
+            <% } %>
             <li class="nav-item">
               <a class="nav-link" href="/add">Add friends</a>
+            </li>
+            <li class="nav-item">
+              <% if (count >= 1) { %> 
+                <a class="nav-link" href="/notifications">Friend requests <span class="badge badge-light notifications"><%= count %></span></a>
+              <% } else { %>
+              <a class="nav-link" href="/notifications">Friend requests</a>
+              <% } %>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/delete">Remove friends</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/choose">Select restaurant</a>
+              <a class="nav-link" href="/choose">Restaurant generator</a>
             </li>
             <% if (loggedIn) { %>
             <form action="/logout?_method=DELETE" method="POST">

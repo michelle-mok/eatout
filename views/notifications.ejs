@@ -2,7 +2,7 @@
 
 <div class="container add-header">
   <div class="jumbotron"></div>
-    <h2 class="display-4">Add your friends</h2>
+    <h2 class="display-4">Friend requests</h2>
   </div>
 </div>
 <div class="container add-friend d-flex flex-column">
@@ -12,12 +12,12 @@
         <th scope="col">First</th>
         <th scope="col">Last</th>
         <th scope="col" class="d-none d-sm-block">email</th>
-        <th scope="col">Add</th>
+        <th scope="col">Approve</th>
       </tr>
     </thead>
     <tbody>
-      <form action="/add" method="POST">
-        <% contactDetails.forEach((friend) => { %>
+      <form action="/notifications" method="POST">
+        <% requestDetails.forEach((friend) => { %>
         <tr>
           <td><%= friend.first_name %></td>
           <td><%= friend.last_name %></td>
@@ -38,7 +38,7 @@
         <br />
         <br />
         <button class="btn btn-outline-info order-3 add-button" type="submit">
-          Submit friend request !
+          Approve friend requests !
         </button>
       </form>
     </tbody>
