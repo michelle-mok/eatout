@@ -59,6 +59,10 @@ body {
   padding-bottom: 20px;
 }
 
+.register-link {
+  color: gray;
+}
+
 /* delete friends */
 .delete {
   font-weight: 100;

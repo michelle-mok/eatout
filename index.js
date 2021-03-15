@@ -269,7 +269,7 @@ app.get('/notifications', (req, res) => {
       });
 
       if (friendRequestIds.length === 0) {
-        res.render('no-friend-request', { loggedIn });
+        res.render('no-friend-request', { loggedIn, count });
         return;
       }
 
