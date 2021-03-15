@@ -482,7 +482,7 @@ app.post('/choose', (req, res) => {
       console.log('done');
 
       // if there are no suitable restaurants found
-      if (restaurantsArray.length === 0) {
+      if (!restaurantsArray || restaurantsArray.length === 0) {
         res.render('no-results', { loggedIn, count });
         return;
       }
